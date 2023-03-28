@@ -201,6 +201,27 @@ void RTC_DS3231::adjust(const DateTime& dt) {
 
 }
 
+void RTC_DS3231::adjustAlarm(const DateTime& at1, const DateTime& at2) {      
+  WIRE.beginTransmission(DS3231_ADDRESS);
+  // Write alarms data to DS3231
+      WIRE.write(7);                              // Send register address (alarm1 seconds)
+      WIRE.write(0);                              // Write 0 to alarm1 seconds
+      WIRE.write(bin2bcd(at1.minute()));                  // Write alarm1 minutes value to DS3231
+      WIRE.write(bin2bcd(at1.hour()));                    // Write alarm1 hours value to DS3231
+      WIRE.write(0x80);                           // Alarm1 when hours, minutes, and seconds match
+      WIRE.write(bin2bcd(at2.minute()));                  // Write alarm2 minutes value to DS3231
+      WIRE.write(bin2bcd(at2.hour()));                    // Write alarm2 hours value to DS3231
+      WIRE.write(0x80);                           // Alarm2 when hours and minutes match
+      WIRE.write(4 | 1 | 1);      // Write data to DS3231 control register (enable interrupt when alarm)
+      WIRE.write(0);                              // Clear alarm flag bits
+      WIRE.endTransmission();                     // Stop transmission and release the I2C bus
+
+  uint8_t statreg = read_i2c_register(DS3231_ADDRESS, DS3231_STATUSREG);
+  statreg &= ~0x80; // flip OSF bit
+  write_i2c_register(DS3231_ADDRESS, DS3231_STATUSREG, statreg);
+
+}
+
 DateTime RTC_DS3231::now() {
   WIRE.beginTransmission(DS3231_ADDRESS);
   WIRE.write(0);

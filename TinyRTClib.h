@@ -34,6 +34,7 @@ class RTC_DS3231 {
 public:
     static uint8_t begin(void);
     static void adjust(const DateTime& dt);
+    static void adjustAlarm(const DateTime& at1, const DateTime& at2);
     bool lostPower(void);
     static DateTime now();
     static String temp();

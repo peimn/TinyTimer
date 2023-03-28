@@ -20,9 +20,14 @@ void setup_rtc() {
       lcd.clear ();
       lcd.home ();
       lcd.print("RTC power lost");
-      DateTime saved_time = DateTime(2023, 3, 11, 21, 57, 0);
+      DateTime saved_time = DateTime(2023, 3, 15, 22, 50, 0);
       rtc.adjust( saved_time );
   }
+
+  // set alarm
+  DateTime alarm_1 = DateTime(0, 0, 0, 1, 15, 0);
+  DateTime alarm_2 = DateTime(0, 0, 0, 1, 20, 0);
+  rtc.adjustAlarm(alarm_1, alarm_2);
 }
 
 void print_time() {
